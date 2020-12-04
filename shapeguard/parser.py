@@ -19,10 +19,15 @@ from __future__ import print_function
 
 from shapeguard import dim_specs
 from shapeguard import shape_spec
-from shapeguard import shape_spec_parser
+import lark
+
+from typing import Callable, Optional
+from pathlib import Path
+
+GRAMMAR_FILE = Path("shape_spec.lark")
 
 
-class TreeToSpec(shape_spec_parser.Transformer):
+class TreeToSpec(lark.Transformer):
     start = shape_spec.ShapeSpec
     wildcard = dim_specs.Wildcard.make
     ellipsis = dim_specs.EllipsisDim.make
@@ -36,5 +41,5 @@ class TreeToSpec(shape_spec_parser.Transformer):
     div = dim_specs.DivDims.make
 
 
-parser = shape_spec_parser.Lark_StandAlone(transformer=TreeToSpec())
-parse = parser.parse
+parser = lark.Lark(grammar=GRAMMAR_FILE.read_text(), transformer=TreeToSpec())
+parse: Callable[[str], shape_spec.ShapeSpec] = parser.parse  # type: ignore

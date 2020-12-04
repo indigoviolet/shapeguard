@@ -18,18 +18,16 @@ from typing import List, Union, Dict, Optional, Tuple
 
 from shapeguard import dim_specs
 from shapeguard import exception
-from shapeguard import shape_spec_parser
+import lark
 
-EntriesType = List[Union[shape_spec_parser.Token, dim_specs.DimSpec]]
+EntriesType = List[Union[lark.Token, dim_specs.DimSpec]]
 ShapeType = Union[Tuple[int], List[int]]
 
 
 class ShapeSpec:
     def __init__(self, entries: EntriesType):
         super().__init__()
-        self.entries = [
-            x for x in entries if not isinstance(x, shape_spec_parser.Token)
-        ]
+        self.entries = [x for x in entries if not isinstance(x, lark.Token)]
         if dim_specs.ellipsis_dim in self.entries:
             idx = self.entries.index(dim_specs.ellipsis_dim)
             self.left_entries = self.entries[:idx]

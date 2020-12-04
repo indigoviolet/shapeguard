@@ -16,38 +16,37 @@
 
 from copy import copy
 
-from typing import List, Tuple, Dict, Union, Optional
+from typing import List, Tuple, Dict, Union, Optional, Any
 
-import numpy as np
-import tensorflow as tf
-import tensorflow_probability as tfp
 
 from shapeguard import exception
-from shapeguard import parser
+from .parser import parse
+from .shims import get_shim
 
-Tensor = Union[np.ndarray, tf.Tensor]
+Tensor = Any
 
 
 def matches(tensor: Tensor, template: str, dims: Dict[str, int]) -> bool:
     shape = get_shape(tensor)
-    spec = parser.parse(template)
+    spec = parse(template)
     return spec.matches(shape, dims)
 
 
 def reshape(tensor: Tensor, template: str, dims: Dict[str, int]) -> Tensor:
-    spec = parser.parse(template)
+    spec = parse(template)
     new_shape = spec.evaluate(dims)
-    return tf.reshape(tensor, new_shape)
+    shim = get_shim(tensor)
+    return shim.reshape(new_shape)
 
 
 def evaluate(template: str, dims: Dict[str, int]) -> List[Optional[int]]:
-    dim_spec = parser.parse(template)
+    dim_spec = parse(template)
     return dim_spec.evaluate(dims)
 
 
 def guard(tensor: Tensor, template: str, dims: Dict[str, int]):
     shape = get_shape(tensor)
-    spec = parser.parse(template)
+    spec = parse(template)
     # compare rank
     if not spec.rank_matches(shape):
         raise exception.ShapeError(
@@ -73,23 +72,6 @@ def guard(tensor: Tensor, template: str, dims: Dict[str, int]):
     return {k: v for k, v in inferred_dims.items() if not k.startswith("_")}
 
 
-def get_shape(tensor_or_shape: Union[Tensor, Tuple[int], List[int]]) -> List[int]:
-    if isinstance(tensor_or_shape, (list, tuple)):
-        return list(tensor_or_shape)
-    elif isinstance(tensor_or_shape, tf.Tensor):
-        return tensor_or_shape.get_shape().as_list()
-    elif isinstance(tensor_or_shape, tf.TensorShape):
-        return tensor_or_shape.as_list()
-    elif isinstance(tensor_or_shape, np.ndarray):
-        return list(tensor_or_shape.shape)
-    elif isinstance(tensor_or_shape, tfp.distributions.Distribution):
-        return (
-            tensor_or_shape.batch_shape.as_list()
-            + tensor_or_shape.event_shape.as_list()
-        )
-    else:
-        raise TypeError(
-            "Unknown tensor/shape {} of type: {}".format(
-                tensor_or_shape, type(tensor_or_shape)
-            )
-        )
+def get_shape(tensor: Tensor) -> List[int]:
+    shim = get_shim(tensor)
+    return shim.get_shape()
