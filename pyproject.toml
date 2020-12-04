@@ -2,7 +2,7 @@
 name = "shapeguard"
 version = "0.1.0"
 description = "ShapeGuard is a tool to help with handling shapes in Tensorflow."
-authors = ["Klaus Greff <klaus.greff@startmail.com>"]
+authors = ["Venky Iyer <indigoviolet@gmail.com>", "Klaus Greff <klaus.greff@startmail.com>"]
 license = "Apache-2.0"
 classifiers = [
     "Development Status :: 4 - Beta",
@@ -16,7 +16,7 @@ classifiers = [
     "Topic :: Scientific/Engineering",
 ]
 readme = "README.md"
-repository = "https://github.com/Qwlouse/shapeguard"
+repository = "https://github.com/indigoviolet/shapeguard"
 
 [tool.poetry.dependencies]
 python = "^3.8"
@@ -24,11 +24,10 @@ tensorflow = {version = "^2.3.1", extras = ["tensorflow"]}
 numpy = {version = "*", extras = ["numpy"]}
 tensorflow-probability = {version = "^0.11.1", extras = ["tensorflow"]}
 torch = {version = "^1.7.0", extras = ["pytorch"]}
-
+lark-parser = "^0.11.1"
 
 
 [tool.poetry.dev-dependencies]
-lark-parser = "^0.11.1"
 black = "^19.3b0"
 pytest = "^5.0"
 mypy = "^0.790"
