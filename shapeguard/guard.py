@@ -63,4 +63,4 @@ class ShapeGuard:
 
 def sg(tensor, template: str):
     assert tensor is not None
-    return ShapeGuard.get().guard(tensor, template)
+    ShapeGuard.get().guard(tensor, template)
