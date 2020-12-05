@@ -6,6 +6,7 @@ Forked from https://github.com/Qwlouse/shapeguard and improved:
 
 - removed generated lark parser in favor of using the library directly
 - cleaned up Python types
+- removed dotted access to dims from ShapeGuard
 - added a shim system to make it extensible
 - added support for Pytorch tensors
 - added patching for Pytorch
@@ -52,8 +53,17 @@ assert sg.dims['B'] == 64
   t = torch.arange(0, 10).unsqueeze(0)
   t.sg('B,W')
 
+  # There is a ShapeGuard singleton that supports the monkeypatched `sg` method
+  shapeguard.ShapeGuard.get().dims
+  # >>> {'B': 1, 'W': 10}
+
+  # it can be reset
+  shapeguard.ShapeGuard.reset()
+  shapeguard.ShapeGuard.get().dims
+  # >>> {}
 
 #+END_SRC
+
 
 
 ** Shape Template Syntax
