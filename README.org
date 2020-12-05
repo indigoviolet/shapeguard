@@ -59,10 +59,10 @@ assert sg.dims['B'] == 64
 ** Shape Template Syntax
 The shape template mini-DSL supports many different ways of specifying shapes:
 
-  - numbers: ="64, 32, 32, 3"=
-  - named dimensions: ="B, width, height2, channels"=
-  - wildcards: ="B, *, *, *"=
-  - ellipsis: ="B, ..., 3"=
-  - addition, subtraction, multiplication, division: ="B*N, W/2, H*(C+1)"=
-  - dynamic dimensions: ="?, H, W, C"=  (only matches =[None, H, W, C]=)
+  - numbers: =64, 32, 32, 3=
+  - named dimensions: =B, width, height2, channels=
+  - wildcards: =B, *, *, *=
+  - ellipsis: =B, ..., 3=
+  - addition, subtraction, multiplication, division: =B*N, W/2, H*(C+1)=
+  - dynamic dimensions: =?, H, W, C=  (only matches =[None, H, W, C]=)
 
