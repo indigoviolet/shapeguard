@@ -41,10 +41,6 @@ class ShapeGuard:
         cls._singleton = cls()
         return cls._singleton
 
-    @staticmethod
-    def singleton_guard(tensor, template: str):
-        return ShapeGuard.get().guard(tensor, template)
-
     def matches(self, tensor, template: str) -> bool:
         return tools.matches(tensor, template, self.dims)
 
@@ -63,3 +59,8 @@ class ShapeGuard:
 
     def __getitem__(self, item: str) -> List[Optional[int]]:
         return tools.evaluate(item, self.dims)
+
+
+def sg(tensor, template: str):
+    assert tensor is not None
+    return ShapeGuard.get().guard(tensor, template)

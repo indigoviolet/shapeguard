@@ -1,7 +1,9 @@
-from .guard import ShapeGuard
+from .guard import sg
 
 try:
     import torch  # type: ignore
-    torch.Tensor.sg = ShapeGuard.singleton_guard
+
+    # But this will give type errors since Tensor doesn't have an `sg`
+    torch.Tensor.sg = sg
 except ImportError:
     pass

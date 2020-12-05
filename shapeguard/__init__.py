@@ -16,26 +16,5 @@
 
 from . import patch
 from .exception import ShapeError
-from .guard import ShapeGuard
+from .guard import ShapeGuard, sg
 from .tools import evaluate, get_shape, matches, reshape
-
-__version__ = "0.1.0"
-
-__author__ = "Klaus Greff"
-__author_email__ = "klaus.greff@startmail.com"
-
-__url__ = "https://github.com/Qwlouse/shapeguard"
-
-
-__all__ = (
-    "ShapeGuard",
-    "__version__",
-    "__author__",
-    "__author_email__",
-    "matches",
-    "evaluate",
-    "guard",
-    "reshape",
-    "get_shape",
-    "ShapeError",
-)
