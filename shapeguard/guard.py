@@ -17,7 +17,7 @@
 from __future__ import annotations
 
 from copy import copy
-from typing import ClassVar, Dict, List, Optional
+from typing import ClassVar, Dict, List, Optional, Union
 
 import attr
 
@@ -61,6 +61,24 @@ class ShapeGuard:
         return tools.evaluate(item, self.dims)
 
 
-def sg(tensor, template: str):
-    assert tensor is not None
-    ShapeGuard.get().guard(tensor, template)
+def sg(tensor, template: Union[str, List[str]]):
+
+    if isinstance(template, list):
+        assert isinstance(
+            tensor, list
+        ), f"Found list template {template}, but non-list tensor {type(tensor)}"
+        assert (
+            len(tensor) >= 1
+        ), f"Found list template {template}, but empty list tensor"
+
+        if len(template) == 1:
+            template = template * len(tensor)
+
+        assert len(template) == len(
+            tensor
+        ), "Found {len(template)} templates, but {len(tensor)} tensors"
+
+        for t, m in zip(tensor, template):
+            sg(t, m)
+    else:
+        ShapeGuard.get().guard(tensor, template)
