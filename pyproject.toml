@@ -15,7 +15,7 @@ classifiers = [
     "Topic :: Utilities",
     "Topic :: Scientific/Engineering",
 ]
-readme = "README.md"
+readme = "README.org"
 repository = "https://github.com/indigoviolet/shapeguard"
 
 [tool.poetry.dependencies]
