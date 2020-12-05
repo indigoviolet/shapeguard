@@ -1,6 +1,8 @@
 from typing import List
-from .shim import TensorShim
+
 import numpy as np  # type: ignore
+
+from .shim import TensorShim
 
 
 class NpTensorShim(TensorShim[np.ndarray]):

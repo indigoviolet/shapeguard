@@ -1,6 +1,8 @@
 from typing import List
-from .shim import TensorShim
+
 import tensorflow_probability as tfp  # type: ignore
+
+from .shim import TensorShim
 
 
 class TfpDistributionShim(TensorShim[tfp.distribution.Distribution]):

@@ -1,6 +1,8 @@
 from typing import List, Optional
-from .shim import TensorShim
+
 import tf  # type: ignore
+
+from .shim import TensorShim
 
 
 class TfTensorShim(TensorShim[tf.Tensor]):

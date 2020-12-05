@@ -13,18 +13,16 @@
 # limitations under the License.
 """Defines the transformation from a shape template parse tree to ShapeSpec."""
 
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
+from __future__ import absolute_import, division, print_function
 
-from shapeguard import dim_specs
-from shapeguard import shape_spec
+from pathlib import Path
+from typing import Callable, Optional
+
 import lark
 
-from typing import Callable, Optional
-from pathlib import Path
+from shapeguard import dim_specs, shape_spec
 
-GRAMMAR_FILE = Path("shape_spec.lark")
+GRAMMAR_FILE = Path(__file__).parent / "shape_spec.lark"
 
 
 class TreeToSpec(lark.Transformer):
@@ -41,5 +39,7 @@ class TreeToSpec(lark.Transformer):
     div = dim_specs.DivDims.make
 
 
-parser = lark.Lark(grammar=GRAMMAR_FILE.read_text(), transformer=TreeToSpec())
+parser = lark.Lark(
+    grammar=GRAMMAR_FILE.read_text(), transformer=TreeToSpec(), parser="lalr"
+)
 parse: Callable[[str], shape_spec.ShapeSpec] = parser.parse  # type: ignore

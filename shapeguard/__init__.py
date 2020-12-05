@@ -14,13 +14,10 @@
 
 """This python module contains ShapeGuard."""
 
-from shapeguard.exception import ShapeError
-from shapeguard.guard import ShapeGuard
-from shapeguard.tools import matches
-from shapeguard.tools import evaluate
-from shapeguard.tools import reshape
-from shapeguard.tools import get_shape
-
+from . import patch
+from .exception import ShapeError
+from .guard import ShapeGuard
+from .tools import evaluate, get_shape, matches, reshape
 
 __version__ = "0.1.0"
 

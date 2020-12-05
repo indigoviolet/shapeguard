@@ -1,4 +1,5 @@
-from typing import List, Union, Tuple
+from typing import List, Tuple, Union
+
 from .shim import TensorShim
 
 ListShapeType = Union[List[int], Tuple[int, ...]]

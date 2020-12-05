@@ -14,11 +14,11 @@
 
 """Defines the ShapeSpec object which represents a parsed shape template."""
 
-from typing import List, Union, Dict, Optional, Tuple
+from typing import Dict, List, Optional, Tuple, Union
 
-from shapeguard import dim_specs
-from shapeguard import exception
 import lark
+
+from shapeguard import dim_specs, exception
 
 EntriesType = List[Union[lark.Token, dim_specs.DimSpec]]
 ShapeType = Union[Tuple[int], List[int]]

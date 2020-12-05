@@ -14,15 +14,36 @@
 
 """Contains the main ShapeGuard class."""
 
+from __future__ import annotations
+
 from copy import copy
-from typing import Optional, Dict, Any, List
+from typing import ClassVar, Dict, List, Optional
+
+import attr
 
 from shapeguard import tools
 
 
+@attr.s(auto_attribs=True)
 class ShapeGuard:
-    def __init__(self, dims: Optional[Dict[str, int]] = None):
-        object.__setattr__(self, "dims", {} if dims is None else dims)
+    dims: Dict[str, int] = attr.ib(factory=dict)
+
+    _singleton: ClassVar[Optional[ShapeGuard]] = None
+
+    @classmethod
+    def get(cls) -> ShapeGuard:
+        if cls._singleton is None:
+            return cls.reset()
+        return cls._singleton
+
+    @classmethod
+    def reset(cls) -> ShapeGuard:
+        cls._singleton = cls()
+        return cls._singleton
+
+    @staticmethod
+    def singleton_guard(tensor, template: str):
+        return ShapeGuard.get().guard(tensor, template)
 
     def matches(self, tensor, template: str) -> bool:
         return tools.matches(tensor, template, self.dims)
@@ -42,37 +63,3 @@ class ShapeGuard:
 
     def __getitem__(self, item: str) -> List[Optional[int]]:
         return tools.evaluate(item, self.dims)
-
-    def __getattr__(self, item: str) -> Any:
-        try:
-            # Throws exception if not in prototype chain
-            return object.__getattribute__(self, item)
-        except AttributeError:
-            try:
-                return self.dims[item]
-            except KeyError:
-                raise AttributeError(item)
-
-    def __setattr__(self, key: str, value: Any):
-        try:
-            # Throws exception if not in prototype chain
-            object.__getattribute__(self, key)
-        except AttributeError:
-            try:
-                self.dims[key] = value
-            except KeyError:
-                raise AttributeError(key)
-        else:
-            object.__setattr__(self, key, value)
-
-    def __delattr__(self, item: str):
-        try:
-            # Throws exception if not in prototype chain
-            object.__getattribute__(self, item)
-        except AttributeError:
-            try:
-                del self.dims[item]
-            except KeyError:
-                raise AttributeError(item)
-        else:
-            object.__delattr__(self, item)

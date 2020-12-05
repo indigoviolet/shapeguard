@@ -15,9 +15,9 @@
 """Defines all DimSpecs which represent individual dimensions of a ShapeSpec"""
 
 import operator
-from typing import Optional, Dict, Callable, TypeVar, Generic, Any, Union
-from shapeguard import exception
+from typing import Any, Callable, Dict, Generic, Optional, TypeVar, Union
 
+from shapeguard import exception
 
 # ############################################################################
 # Hack to make mypy happy with callable class variables

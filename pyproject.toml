@@ -20,11 +20,8 @@ repository = "https://github.com/indigoviolet/shapeguard"
 
 [tool.poetry.dependencies]
 python = "^3.8"
-tensorflow = {version = "^2.3.1", extras = ["tensorflow"]}
-numpy = {version = "*", extras = ["numpy"]}
-tensorflow-probability = {version = "^0.11.1", extras = ["tensorflow"]}
-torch = {version = "^1.7.0", extras = ["pytorch"]}
 lark-parser = "^0.11.1"
+attrs = "^20.3.0"
 
 
 [tool.poetry.dev-dependencies]

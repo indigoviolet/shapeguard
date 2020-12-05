@@ -15,11 +15,10 @@
 """Contains the main ShapeGuard class."""
 
 from copy import copy
-
-from typing import List, Tuple, Dict, Union, Optional, Any
-
+from typing import Any, Dict, List, Optional, Tuple, Union
 
 from shapeguard import exception
+
 from .parser import parse
 from .shims import get_shim
 
