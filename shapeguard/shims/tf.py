@@ -1,13 +1,13 @@
 from typing import List, Optional
 
-import tensorflow as tf  # type: ignore
+import tensorflow as tf
 
 from .shim import TensorShim
 
 
 class TfTensorShim(TensorShim[tf.Tensor]):
     def get_shape(self) -> List[int]:
-        return self.tensor.get_shape().as_list()
+        return self.tensor.get_shape().as_list()  # type: ignore
 
     def reshape(self, new_shape: List[Optional[int]]) -> tf.Tensor:
         return tf.reshape(self.tensor, new_shape)
@@ -18,4 +18,4 @@ class TfTensorShapeShim(TensorShim[tf.TensorShape]):
         self.tensor = tensor
 
     def get_shape(self) -> List[int]:
-        return self.tensor.as_list()
+        return self.tensor.as_list()  # type: ignore

@@ -15,29 +15,29 @@ class TensorShim(Generic[T]):
 
 
 try:
-    from numpy import ndarray as _ndarray  # type: ignore
+    from numpy import ndarray as _ndarray
 except ImportError:
     ndarray = None
 else:
     ndarray = _ndarray
 
 try:
-    from tensorflow import Tensor as _TfTensor  # type: ignore
-    from tensorflow import TensorShape as _TfTensorShape  # type: ignore
+    from tensorflow import Tensor as _TfTensor
+    from tensorflow import TensorShape as _TfTensorShape
 except ImportError:
     TfTensor, TfTensorShape = None, None
 else:
     TfTensor, TfTensorShape = _TfTensor, _TfTensorShape
 
 try:
-    import tensorflow_probability.distributions.Distribution as _TfpDistribution  # type: ignore
+    import tensorflow_probability.distributions.Distribution as _TfpDistribution
 except ImportError:
     TfpDistribution = None
 else:
     TfpDistribution = _TfpDistribution
 
 try:
-    from torch import Tensor as _TorchTensor  # type: ignore
+    from torch import Tensor as _TorchTensor
 except ImportError:
     TorchTensor = None
 else:
@@ -52,13 +52,13 @@ def get_shim(tensor: Any) -> TensorShim:
 
     elif TfTensor is not None and isinstance(tensor, TfTensor):
 
-        from .tensorflow import TfTensorShim
+        from .tf import TfTensorShim
 
         return TfTensorShim(tensor)
 
     elif TfTensorShape is not None and isinstance(tensor, TfTensorShape):
 
-        from .tensorflow import TfTensorShapeShim
+        from .tf import TfTensorShapeShim
 
         return TfTensorShapeShim(tensor)
 

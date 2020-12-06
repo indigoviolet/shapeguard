@@ -38,7 +38,9 @@ class ShapeSpec:
             self.right_entries = []
             self.has_ellipsis = False
 
-    def evaluate(self, known_dims: Dict[str, int] = None) -> List[Optional[int]]:
+    def evaluate(
+        self, known_dims: Optional[Dict[str, int]] = None
+    ) -> List[Optional[int]]:
         known_dims = known_dims or {}
 
         if self.has_ellipsis:
@@ -49,7 +51,7 @@ class ShapeSpec:
             return [x.evaluate(known_dims) for x in self.entries]
 
     def partial_evaluate(
-        self, known_dims: Dict[str, int] = None
+        self, known_dims: Optional[Dict[str, int]] = None
     ) -> List[Union[int, str, None]]:
         known_dims = known_dims or {}
         eval_shape: List[Union[int, str, None]] = []
@@ -69,7 +71,7 @@ class ShapeSpec:
                 return False
         return True
 
-    def matches(self, shape, known_dims: Dict[str, int] = None) -> bool:
+    def matches(self, shape, known_dims: Optional[Dict[str, int]] = None) -> bool:
         known_dims = known_dims or {}
         rank_matches = self.rank_matches(shape)
         conflicts = any(
@@ -86,7 +88,7 @@ class ShapeSpec:
                 yield s, e
 
     def infer(
-        self, shape: ShapeType, known_dims: Dict[str, int] = None
+        self, shape: ShapeType, known_dims: Optional[Dict[str, int]] = None
     ) -> Dict[str, int]:
         current_known = {}
         if known_dims:
