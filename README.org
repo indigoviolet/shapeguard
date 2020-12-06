@@ -7,11 +7,12 @@ Forked from https://github.com/Qwlouse/shapeguard.
 * Changes
 
 - removed generated lark parser in favor of using the library directly
-- cleaned up Python types
 - removed dotted access to dims from ShapeGuard
+- cleaned up Python types
 - added a shim system to make it extensible
 - added support for Pytorch tensors
-- added patching for Pytorch
+- added `sg()` and `Tensor.sg`` patching for Pytorch
+- added support for list templates in `sg()`
 - added support for assignment in shape templates
 
 * Usage
@@ -51,7 +52,7 @@ assert sg.dims['B'] == 64
   #+BEGIN_SRC python
 
     # Pytorch tensors are monkeypatched with an sg() method for
-    # convenience, which calls guard()
+    # convenience, which calls guard() on a hidden singleton (see below)
 
     import torch
     import shapeguard               # required for patching
@@ -70,11 +71,10 @@ assert sg.dims['B'] == 64
 
   #+END_SRC
 
-
   One annoyance with the above is that mypy will complain about
   Tensor not having an `sg` attribute.
 
-  An alternative is to do:
+  A mypy-safe alternative is to do:
 
   #+BEGIN_SRC python
 
@@ -84,8 +84,7 @@ assert sg.dims['B'] == 64
 
   #+END_SRC
 
-  This is ok, except for the annoyance of having to import shapeguard
-  into every file that uses this feature.
+  This is ok, except for the annoyance of having to import shapeguard everywhere.
 
 * Shape Template Syntax
   The shape template mini-DSL supports many different ways of specifying shapes:
