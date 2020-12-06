@@ -22,8 +22,8 @@ else:
     ndarray = _ndarray
 
 try:
-    from tf import Tensor as _TfTensor  # type: ignore
-    from tf import TensorShape as _TfTensorShape  # type: ignore
+    from tensorflow import Tensor as _TfTensor  # type: ignore
+    from tensorflow import TensorShape as _TfTensorShape  # type: ignore
 except ImportError:
     TfTensor, TfTensorShape = None, None
 else:

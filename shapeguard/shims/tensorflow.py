@@ -1,6 +1,6 @@
 from typing import List, Optional
 
-import tf  # type: ignore
+import tensorflow as tf  # type: ignore
 
 from .shim import TensorShim
 

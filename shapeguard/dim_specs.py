@@ -17,7 +17,7 @@
 import operator
 from typing import Any, Callable, Dict, Generic, Optional, TypeVar, Union
 
-from shapeguard import exception
+from . import exception
 
 # ############################################################################
 # Hack to make mypy happy with callable class variables

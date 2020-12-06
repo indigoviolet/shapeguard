@@ -18,7 +18,7 @@ from typing import Dict, List, Optional, Tuple, Union
 
 import lark
 
-from shapeguard import dim_specs, exception
+from . import dim_specs, exception
 
 EntriesType = List[Union[lark.Token, dim_specs.DimSpec]]
 ShapeType = Union[Tuple[int], List[int]]
