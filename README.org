@@ -2,7 +2,9 @@
 
 ShapeGuard is a tool to help with handling shapes in Pytorch, Tensorflow and NumPy.
 
-Forked from https://github.com/Qwlouse/shapeguard and improved:
+Forked from https://github.com/Qwlouse/shapeguard.
+
+* Changes
 
 - removed generated lark parser in favor of using the library directly
 - cleaned up Python types
@@ -10,6 +12,9 @@ Forked from https://github.com/Qwlouse/shapeguard and improved:
 - added a shim system to make it extensible
 - added support for Pytorch tensors
 - added patching for Pytorch
+- added support for assignment in shape templates
+
+* Usage
 
 #+BEGIN_SRC python
 
@@ -41,54 +46,54 @@ assert sg['H, W*C+1'] == [32, 97]
 assert sg.dims['B'] == 64
 #+END_SRC
 
-** Convenient guarding
+* Convenient guarding
 
-   #+BEGIN_SRC python
+  #+BEGIN_SRC python
 
-     # Pytorch tensors are monkeypatched with an sg() method for
-     # convenience, which calls guard()
+    # Pytorch tensors are monkeypatched with an sg() method for
+    # convenience, which calls guard()
 
-     import torch
-     import shapeguard               # required for patching
+    import torch
+    import shapeguard               # required for patching
 
-     t = torch.arange(0, 10).unsqueeze(0)
-     t.sg('B,W')
+    t = torch.arange(0, 10).unsqueeze(0)
+    t.sg('B,W')
 
-     # There is a ShapeGuard singleton that supports the monkeypatched `sg` method
-     shapeguard.ShapeGuard.get().dims
-     # >>> {'B': 1, 'W': 10}
+    # There is a ShapeGuard singleton that supports the monkeypatched `sg` method
+    shapeguard.ShapeGuard.get().dims
+    # >>> {'B': 1, 'W': 10}
 
-     # it can be reset
-     shapeguard.ShapeGuard.reset()
-     shapeguard.ShapeGuard.get().dims
-     # >>> {}
+    # it can be reset
+    shapeguard.ShapeGuard.reset()
+    shapeguard.ShapeGuard.get().dims
+    # >>> {}
 
-   #+END_SRC
+  #+END_SRC
 
 
-   One annoyance with the above is that mypy will complain about
-   Tensor not having an `sg` attribute.
+  One annoyance with the above is that mypy will complain about
+  Tensor not having an `sg` attribute.
 
-   An alternative is to do:
+  An alternative is to do:
 
-   #+BEGIN_SRC python
+  #+BEGIN_SRC python
 
-     from shapeguard import sg
+    from shapeguard import sg
 
-     sg(t, 'B,W')
+    sg(t, 'B,W')
 
-   #+END_SRC
+  #+END_SRC
 
-   This is ok, except for the annoyance of having to import shapeguard
-   into every file that uses this feature.
+  This is ok, except for the annoyance of having to import shapeguard
+  into every file that uses this feature.
 
-** Shape Template Syntax
-   The shape template mini-DSL supports many different ways of specifying shapes:
+* Shape Template Syntax
+  The shape template mini-DSL supports many different ways of specifying shapes:
 
-  - numbers: ~64, 32, 32, 3~
-  - named dimensions: ~B, width, height2, channels~
-  - assignment to names that can then be used in further guards: ~B, W2=W/2, H, C~
-  - wildcards: ~B, *, *, *~
-  - ellipsis: ~B, ..., 3~
-  - addition, subtraction, multiplication, division: ~B*N, W/2, H*(C+1)~
-  - dynamic dimensions: ~?, H, W, C~  (only matches ~[None, H, W, C]~)
+ - numbers: ~64, 32, 32, 3~
+ - named dimensions: ~B, width, height2, channels~
+ - assignment to names that can then be used in further guards: ~B, W2=W/2, H, C~
+ - wildcards: ~B, *, *, *~
+ - ellipsis: ~B, ..., 3~
+ - addition, subtraction, multiplication, division: ~B*N, W/2, H*(C+1)~
+ - dynamic dimensions: ~?, H, W, C~  (only matches ~[None, H, W, C]~)
