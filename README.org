@@ -65,7 +65,7 @@ assert sg.dims['B'] == 64
 
    #+END_SRC
 
-   
+
    One annoyance with the above is that mypy will complain about
    Tensor not having an `sg` attribute.
 
@@ -81,14 +81,14 @@ assert sg.dims['B'] == 64
 
    This is ok, except for the annoyance of having to import shapeguard
    into every file that uses this feature.
-   
+
 ** Shape Template Syntax
    The shape template mini-DSL supports many different ways of specifying shapes:
 
-  - numbers: =64, 32, 32, 3=
-  - named dimensions: =B, width, height2, channels=
-  - wildcards: =B, *, *, *=
-  - ellipsis: =B, ..., 3=
-  - addition, subtraction, multiplication, division: =B*N, W/2, H*(C+1)=
-  - dynamic dimensions: =?, H, W, C=  (only matches =[None, H, W, C]=)
-
+  - numbers: ~64, 32, 32, 3~
+  - named dimensions: ~B, width, height2, channels~
+  - assignment to names that can then be used in further guards: ~B, W2=W/2, H, C~
+  - wildcards: ~B, *, *, *~
+  - ellipsis: ~B, ..., 3~
+  - addition, subtraction, multiplication, division: ~B*N, W/2, H*(C+1)~
+  - dynamic dimensions: ~?, H, W, C~  (only matches ~[None, H, W, C]~)

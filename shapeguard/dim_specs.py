@@ -14,6 +14,8 @@
 
 """Defines all DimSpecs which represent individual dimensions of a ShapeSpec"""
 
+from __future__ import annotations
+
 import operator
 from typing import Any, Callable, Dict, Generic, Optional, TypeVar, Union
 
@@ -202,6 +204,8 @@ class Dynamic(DimSpec):
 class NamedDim(DimSpec):
     """Represents a named dimension."""
 
+    name: str
+
     def __init__(self, name):
         super(NamedDim, self).__init__()
         self.name = str(name)
@@ -239,6 +243,29 @@ class NamedDim(DimSpec):
             return False
         else:
             return self.name == other.name
+
+
+class AssignDim(NamedDim):
+    """ Represents an assignment to a new name """
+
+    def __init__(self, name: str, value: Union[NamedDim, OpSpec, Number]):
+        super(AssignDim, self).__init__(name)
+        self.value = value
+
+    def infer(
+        self, shape_entry: Optional[int], known_dims: Dict[str, int]
+    ) -> Dict[str, int]:
+
+        try:
+            val = self.value.evaluate(known_dims)
+        except exception.UnderspecifiedShapeError:
+            return self.value.infer(shape_entry, known_dims)
+
+        if self.name in known_dims:
+            return {}
+        else:
+            assert val is not None, "Null assignment to {self.name}"
+            return {self.name: val}
 
 
 class DynamicNamedDim(NamedDim):

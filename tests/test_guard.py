@@ -14,9 +14,7 @@
 
 import pytest
 import tensorflow as tf
-
-from shapeguard import ShapeError
-from shapeguard import ShapeGuard
+from shapeguard import ShapeError, ShapeGuard
 
 
 def test_guard_raises():
@@ -38,6 +36,15 @@ def test_guard_infers_dimensions_complex():
     a = tf.ones([1, 2, 3])
     sg.guard(a, "A, B*2, A+C")
     assert sg.dims == {"A": 1, "B": 1, "C": 2}
+
+
+def test_guard_infers_assign():
+    sg = ShapeGuard()
+    a = tf.ones([1, 2, 3])
+    sg.guard(a, "A, D=B*2, A+C")
+    assert sg.dims == {"A": 1, "B": 1, "C": 2, "D": 2}
+    with pytest.raises(ShapeError):
+        sg.guard(a, "1, E=D/2, 3")
 
 
 def test_guard_infers_dimensions_operator_priority():

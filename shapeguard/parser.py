@@ -31,6 +31,7 @@ class TreeToSpec(lark.Transformer):
     ellipsis = dim_specs.EllipsisDim.make
     dynamic = dim_specs.Dynamic.make
     name = dim_specs.NamedDim.make
+    assign = dim_specs.AssignDim.make
     dynamic_name = dim_specs.DynamicNamedDim.make
     number = dim_specs.Number.make
     add = dim_specs.AddDims.make

@@ -1,6 +1,6 @@
 from typing import List
 
-import torch  # type: ignore
+import torch
 
 from .shim import TensorShim
 

@@ -1,6 +1,6 @@
 from typing import List
 
-import numpy as np  # type: ignore
+import numpy as np
 
 from .shim import TensorShim
 

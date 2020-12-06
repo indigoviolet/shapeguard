@@ -14,11 +14,14 @@
 
 start: dim ("," dim)*
 
-?dim: sum
+?dim: assign
+    | sum
     | wildcard
     | ellipsis
     | dynamic
     | dynamic_item
+
+?assign: CNAME "=" sum               -> assign
 
 ?sum: product
     | sum "+" product                -> add
