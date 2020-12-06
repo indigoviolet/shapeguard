@@ -18,19 +18,21 @@ start: dim ("," dim)*
     | wildcard
     | ellipsis
     | dynamic
+    | dynamic_item
 
 ?sum: product
-    | sum "+" product       -> add
-    | sum "-" product       -> sub
+    | sum "+" product                -> add
+    | sum "-" product                -> sub
 
-?product: item
-        | product "*" item  -> mul
-        | product "/" item  -> div
+?product: concrete
+        | product "*" concrete       -> mul
+        | product "/" concrete       -> div
 
-?item: INT                  -> number
-     | CNAME                -> name
-     | CNAME "?"            -> dynamic_name
-     | "(" sum ")"
+?concrete: INT                       -> number
+         | CNAME                     -> name
+         | "(" sum ")"
+
+?dynamic_item: CNAME "?"             -> dynamic_name
 
 wildcard: "*"
 ellipsis: "..."
