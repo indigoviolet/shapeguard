@@ -76,7 +76,7 @@ def sg(tensor, template: Union[str, List[str]]):
 
         assert len(template) == len(
             tensor
-        ), "Found {len(template)} templates, but {len(tensor)} tensors"
+        ), f"Found {len(template)} templates, but {len(tensor)} tensors"
 
         for t, m in zip(tensor, template):
             sg(t, m)
