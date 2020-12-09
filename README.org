@@ -14,26 +14,35 @@ Forked from https://github.com/Qwlouse/shapeguard.
 - added `sg()` and `Tensor.sg`` patching for Pytorch
 - added support for list templates in `sg()`
 - added support for assignment in shape templates
+- exceptions from sg() display the original line
+- Added sg_noop() `from shapeguard import sg_noop as sg`
 
 
 * TODO
-
-** None vs -1 for dynamic dimensions in Pytorch/Tensorflow
-
-   convert to common=None,  via shim
-
-** support no-op mode for sg()
-
-   from shapeguard import sg_noop as sg
 
 ** DONE should dynamic named dimensions be stored?
    if they should, then should there be a syntax for named but
    unstored dimensions (for documentation purposes, to handle
    dimensions that will be different in the future)?
    eg. _num_gt_targets already works!,
-** support floats instead of int (mainly for interpolation after division)
+** DONE use devtools.debug to produce error message containing the actual tensor name
+** DONE support no-op mode for sg()
+   
+   from shapeguard import sg_noop as sg
+
+** None vs -1 for dynamic dimensions in Pytorch/Tensorflow
+
+   convert to common=None,  via shim
+
+** support iterable in sg() "list" mode instead only list
+** support floats instead of int (mainly for interpolation after division or multiplication)
 ** Allow externally supplied `dim=val` args to `sg()`
    these should be inserted into known_dims before template processing
+
+** with reset_sg()
+   context manager that resets known_dims at the end, so you can
+   assign to dims and not have them contaminate future?
+
 ** cache results by tensor id/template?
 ** Add a decorator @sg() that can guard function args
 

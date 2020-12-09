@@ -16,12 +16,15 @@
 
 from __future__ import annotations
 
+import sys
 from copy import copy
 from typing import ClassVar, Dict, List, Optional, Union
 
 import attr
 
-from shapeguard import tools
+from . import tools
+from .exception import ShapeGuardError
+from .utils import get_frame_above
 
 
 @attr.s(auto_attribs=True)
@@ -63,22 +66,51 @@ class ShapeGuard:
 
 def sg(tensor, template: Union[str, List[str]]):
 
-    if isinstance(template, list):
-        assert isinstance(
-            tensor, list
-        ), f"Found list template {template}, but non-list tensor {type(tensor)}"
-        assert (
-            len(tensor) >= 1
-        ), f"Found list template {template}, but empty list tensor"
+    try:
+        if isinstance(template, list):
+            assert isinstance(
+                tensor, list
+            ), f"Found list template {template}, but non-list tensor {type(tensor)}"
+            assert (
+                len(tensor) >= 1
+            ), f"Found list template {template}, but empty list tensor"
 
-        if len(template) == 1:
-            template = template * len(tensor)
+            if len(template) == 1:
+                template = template * len(tensor)
 
-        assert len(template) == len(
-            tensor
-        ), f"Found {len(template)} templates, but {len(tensor)} tensors"
+            assert len(template) == len(
+                tensor
+            ), f"Found {len(template)} templates, but {len(tensor)} tensors"
 
-        for t, m in zip(tensor, template):
-            sg(t, m)
-    else:
-        ShapeGuard.get().guard(tensor, template)
+            for t, m in zip(tensor, template):
+                sg(t, m)
+        else:
+            sgs().guard(tensor, template)
+    except ShapeGuardError as e:
+        # This block is trying to get the exception to display the
+        # actual sg() line that failed.
+        offending_frame = get_frame_above(fn="sg")
+        if offending_frame is None or offending_frame.function == "sg":
+            # if we didn't find a frame (weird!) or for a recursive
+            # call (list templates), we simply pass it up for the
+            # "terminal" sg() call to handle
+            raise
+        else:
+            code_context = offending_frame.code_context
+            assert code_context is not None
+            offending_line = code_context[0].strip()
+            if offending_line is not None:
+                # raise a new exception "from None" so that we don't
+                # have exception chaining
+                raise type(e)(f"\n\t>>> {offending_line}\n {str(e)}").with_traceback(
+                    sys.exc_info()[2]
+                ) from None
+
+    return tensor
+
+
+sgs = ShapeGuard.get
+
+
+def sg_noop(tensor, template: Union[str, List[str]]):
+    return tensor

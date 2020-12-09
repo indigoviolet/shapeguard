@@ -264,7 +264,10 @@ class AssignDim(NamedDim):
         if self.name in known_dims:
             return {}
         else:
-            assert val is not None, "Null assignment to {self.name}"
+            if val is None:
+                raise exception.UnderspecifiedShapeError(
+                    "Null assignment to {self.name}"
+                )
             return {self.name: val}
 
 

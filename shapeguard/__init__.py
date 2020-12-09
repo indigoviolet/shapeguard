@@ -16,5 +16,4 @@
 
 from . import patch
 from .exception import ShapeError
-from .guard import ShapeGuard, sg
-from .tools import evaluate, get_shape, matches, reshape
+from .guard import ShapeGuard, sg, sgs, sg_noop
