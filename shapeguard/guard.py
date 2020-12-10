@@ -25,6 +25,7 @@ import attr
 from . import tools
 from .exception import ShapeGuardError
 from .utils import get_frame_above
+from lark import LarkError
 
 
 @attr.s(auto_attribs=True)
@@ -86,7 +87,7 @@ def sg(tensor, template: Union[str, List[str]]):
                 sg(t, m)
         else:
             sgs().guard(tensor, template)
-    except ShapeGuardError as e:
+    except (ShapeGuardError, LarkError) as e:
         # This block is trying to get the exception to display the
         # actual sg() line that failed.
         offending_frame = get_frame_above(fn="sg")
