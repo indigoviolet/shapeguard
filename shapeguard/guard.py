@@ -101,12 +101,16 @@ def sg(tensor, template: Union[str, List[str]]):
             assert code_context is not None
             offending_line = code_context[0].strip()
             if offending_line is not None:
-                # raise a new exception "from None" so that we don't
-                # have exception chaining
-                raise type(e)(f"\n\t>>> {offending_line}\n {str(e)}").with_traceback(
+                # We can't necessarily create other exception types
+                # with a single str arg, so we cast them to
+                # ShapeGuardError and chain them
+                error_type = (
+                    type(e) if isinstance(e, ShapeGuardError) else ShapeGuardError
+                )
+                chained_error = None if isinstance(e, ShapeGuardError) else e
+                raise error_type(f"\n\t>>> {offending_line}\n {str(e)}").with_traceback(
                     sys.exc_info()[2]
-                ) from None
-
+                ) from chained_error
     return tensor
 
 
