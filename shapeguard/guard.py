@@ -17,7 +17,7 @@
 from __future__ import annotations
 
 from copy import copy
-from typing import Dict, List, Optional
+from typing import Any, Dict, List, Optional
 
 import attr
 
@@ -26,6 +26,7 @@ from . import tools
 
 @attr.s(auto_attribs=True)
 class ShapeGuard:
+    params: Dict[str, Any]
     dims: Dict[str, int] = attr.ib(factory=dict)
 
     def matches(self, tensor, template: str) -> bool:

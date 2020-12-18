@@ -3,10 +3,10 @@ from __future__ import annotations
 import builtins
 import inspect
 import sys
-from collections import Sequence, defaultdict
+from collections import Sequence
 from contextlib import contextmanager
 from types import FrameType
-from typing import Dict, List, Optional, Set, Tuple, Union
+from typing import Any, Dict, List, Optional, Set, Tuple, Union
 
 from lark import LarkError
 
@@ -26,7 +26,7 @@ class InterfaceMeta(type):
     """
 
     _current: Optional[ShapeGuard] = None
-    _all: Dict[HashableDict, ShapeGuard] = defaultdict(ShapeGuard)
+    _all: Dict[HashableDict, ShapeGuard] = {}
     _noop = False
 
     @contextmanager
@@ -37,11 +37,15 @@ class InterfaceMeta(type):
 
     def get(self) -> ShapeGuard:
         if self._current is None:
-            self._current = self._base()
+            self._current = self._get()
         return self._current
 
-    def _base(self):
-        return self._all[HashableDict()]
+    def _get(self, params: Dict[str, Any] = {}) -> ShapeGuard:
+        params = HashableDict(params)
+        if params not in self._all:
+            self._all[params] = ShapeGuard(params=params)
+
+        return self._all[params]
 
     def __call__(self, arg, template: Union[str, List[str], Set[str], Tuple[str, ...]]):  # type: ignore[override]
         if self._noop:
@@ -84,7 +88,7 @@ class Interface(metaclass=InterfaceMeta):
     @contextmanager
     def fork(cls, **kwargs):
         prev = cls._current
-        fork_sg = cls._all[HashableDict(kwargs)]
+        fork_sg = cls._get(params=kwargs)
         cls._switch_fork(fork_sg)
         yield
         cls._switch_fork(prev)
@@ -99,7 +103,7 @@ class Interface(metaclass=InterfaceMeta):
 
     @classmethod
     def _checkout_fork(cls, fork_sg: ShapeGuard) -> None:
-        fork_sg.dims.update(cls._base().dims)
+        fork_sg.dims.update(cls._get().dims)
 
     @classmethod
     def _checkin_fork(cls, fork_sg: ShapeGuard):
