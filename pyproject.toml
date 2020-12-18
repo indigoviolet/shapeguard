@@ -29,6 +29,7 @@ pytest = "^5.0"
 mypy = "^0.790"
 tensorflow = "^2.3.1"
 devtools = "^0.6.1"
+icecream = {git = "https://github.com/gruns/icecream"}
 
 [build-system]
 requires = ["poetry>=0.12"]

@@ -27,3 +27,7 @@ class ShapeError(ShapeGuardError):
 
 class UnderspecifiedShapeError(ShapeGuardError):
     pass
+
+
+class ShapeGuardShimError(ShapeGuardError):
+    pass

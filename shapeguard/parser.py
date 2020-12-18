@@ -13,10 +13,9 @@
 # limitations under the License.
 """Defines the transformation from a shape template parse tree to ShapeSpec."""
 
-from __future__ import absolute_import, division, print_function
 
 from pathlib import Path
-from typing import Callable, Optional
+from typing import Callable
 
 import lark
 

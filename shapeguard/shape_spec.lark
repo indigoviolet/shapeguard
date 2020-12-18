@@ -31,7 +31,7 @@ start: dim ("," dim)*
         | product "*" concrete       -> mul
         | product "/" concrete       -> div
 
-?concrete: INT                       -> number
+?concrete: NUMBER                    -> number
          | CNAME                     -> name
          | "(" sum ")"
 
@@ -41,7 +41,7 @@ wildcard: "*"
 ellipsis: "..."
 dynamic: "?"
 
-%import common.INT
+%import common.NUMBER
 %import common.WS
 %import common.CNAME
 %ignore WS

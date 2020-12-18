@@ -16,4 +16,5 @@
 
 from . import patch
 from .exception import ShapeError
-from .guard import ShapeGuard, sg, sgs, sg_noop
+from .guard import ShapeGuard
+from .interface import sg

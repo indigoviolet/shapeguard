@@ -1,4 +1,4 @@
-from .guard import sg
+from .interface import sg
 
 try:
     import torch

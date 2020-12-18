@@ -158,7 +158,7 @@ class Wildcard(DimSpec):
 class Number(DimSpec):
     """Represents a dimension with a fixed numerical size."""
 
-    def __init__(self, value: int):
+    def __init__(self, value: Union[int, float]):
         super(Number, self).__init__()
         self.value = int(value)
 

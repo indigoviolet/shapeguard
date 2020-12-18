@@ -1,5 +1,7 @@
 from typing import Any, Generic, List, Optional, TypeVar
 
+from ..exception import ShapeGuardShimError
+
 T = TypeVar("T")
 
 
@@ -81,6 +83,6 @@ def get_shim(tensor: Any) -> TensorShim:
 
         return TorchTensorShim(tensor)
     else:
-        raise TypeError(
+        raise ShapeGuardShimError(
             "Unknown tensor/shape {} of type: {}".format(tensor, type(tensor))
         )
