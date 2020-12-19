@@ -1,12 +1,78 @@
-#+TITLE: ShapeGuard
-#+OPTIONS: todo tasks
-
 * ShapeGuard
 
 ShapeGuard is a tool to help with handling shapes in Pytorch, Tensorflow and NumPy.
 
 Forked from https://github.com/Qwlouse/shapeguard.
 
+* Convenient guarding
+
+  #+BEGIN_SRC python
+
+    from shapeguard import sg
+
+    sg(t, 'B,W')
+
+  #+END_SRC
+
+  This is ok, except for the annoyance of having to ~import
+  shapeguard~ everywhere. You can get around this by doing
+  ~sg.install()~, which will pretend that `sg()` is a builtin. (mypy
+  still won't be happy though)
+
+  #+BEGIN_SRC python
+
+    sg.install()
+
+  #+END_SRC
+
+* Forking
+
+  #+BEGIN_SRC python
+
+    sg(x, "B,C,H,W")
+
+    # make a fork of the known dims by passing some params
+    with sg.fork(stride=2):
+
+        # You can use the global dims here, but also infer some dims that
+        # are only relevant in this fork (ie. for stride=2)
+        sg(y, "B,C,h,w")
+
+        # You can pass up some newly inferred dims that are globally
+        # relevant by uppercasing them
+        sg(z, "A,2")
+
+    # A is available in the global namespace now, but h,w are not
+    sg(xx, "A,B,C")
+
+    # ... elsewhere ...
+    with sg.fork(stride=2):
+        # you can reuse the dims saved for this fork by passing the same
+        # fork params
+        sg(yy, "h,w,3")
+  #+END_SRC
+
+* No-op mode
+
+  #+BEGIN_SRC python
+
+    with sg.noop():
+        # No guards will be executed in this block
+        ...
+  #+END_SRC
+
+
+* Shape Template Syntax
+  The shape template mini-DSL supports many different ways of specifying shapes:
+
+ - numbers: ~64, 32, 32, 3.0~
+ - named dimensions: ~B, width, height2, channels~
+ - assignment to names that can then be used in further guards: ~B, W2=W/2, H, C~
+ - wildcards: ~B, *, *, *~
+ - ellipsis: ~B, ..., 3~
+ - addition, subtraction, multiplication, division: ~B*N, W/2, H*(C+1)~
+ - comment-only dimensions: ~?,_num_targets,W,C~ (~num_targets~ won't be stored for future)
+ - dynamic dimensions (tensorflow): ~?, H, W, C~  (only matches ~[None, H, W, C]~)
 * Changes
 
 - removed generated lark parser in favor of using the library directly
@@ -24,7 +90,10 @@ Forked from https://github.com/Qwlouse/shapeguard.
 - Support floats in templates (to handle `2.0` etc from interpolation)
 
 
-* Usage
+* ShapeGuard() usage
+
+This section describes how to use the underlying ~ShapeGuard~ class,
+which you probably don't need to do at all.
 
 #+BEGIN_SRC python
 
@@ -56,56 +125,6 @@ assert sg['H, W*C+1'] == [32, 97]
 assert sg.dims['B'] == 64
 #+END_SRC
 
-* Convenient guarding
-
-  #+BEGIN_SRC python
-
-    # Pytorch tensors are monkeypatched with an sg() method for
-    # convenience, which calls guard() on a hidden singleton (see below)
-
-    import torch
-    import shapeguard               # required for patching
-
-    t = torch.arange(0, 10).unsqueeze(0)
-    t.sg('B,W')
-
-    # There is a ShapeGuard singleton that supports the monkeypatched `sg` method
-    shapeguard.ShapeGuard.get().dims
-    # >>> {'B': 1, 'W': 10}
-
-    # it can be reset
-    shapeguard.ShapeGuard.reset()
-    shapeguard.ShapeGuard.get().dims
-    # >>> {}
-
-  #+END_SRC
-
-  One annoyance with the above is that mypy will complain about
-  Tensor not having an `sg` attribute.
-
-  A mypy-safe alternative is to do:
-
-  #+BEGIN_SRC python
-
-    from shapeguard import sg
-
-    sg(t, 'B,W')
-
-  #+END_SRC
-
-  This is ok, except for the annoyance of having to import shapeguard everywhere.
-
-* Shape Template Syntax
-  The shape template mini-DSL supports many different ways of specifying shapes:
-
- - numbers: ~64, 32, 32, 3~
- - named dimensions: ~B, width, height2, channels~
- - assignment to names that can then be used in further guards: ~B, W2=W/2, H, C~
- - wildcards: ~B, *, *, *~
- - ellipsis: ~B, ..., 3~
- - addition, subtraction, multiplication, division: ~B*N, W/2, H*(C+1)~
- - dynamic dimensions: ~?, H, W, C~  (only matches ~[None, H, W, C]~)
- - comment-only dimensions: ~?,_num_targets,W,C~ (~num_targets~ won't be stored for future)
 * Roadmap
 
   - [X] should dynamic named dimensions be stored?
