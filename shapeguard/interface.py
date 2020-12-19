@@ -69,7 +69,7 @@ class InterfaceMeta(type):
                 ), f"Found {len(template)} templates, but {len(arg)} args"
 
                 for t, m in zip(arg, template):
-                    self(t, m)
+                    sg(t, m)
             else:
                 assert isinstance(template, str)
                 self.get().guard(arg, template)
@@ -84,6 +84,12 @@ def _is_listy(a) -> bool:
 
 
 class Interface(metaclass=InterfaceMeta):
+    def __init__(self, arg, template: Union[str, List[str], Set[str], Tuple[str, ...]]):
+        # This only exists to persuade mypy that Interface() has this
+        # type -- since its implementation is actually in
+        # InterfaceMeta.__call__
+        assert False, "Should not be called"
+
     @classmethod
     @contextmanager
     def fork(cls, **kwargs):
