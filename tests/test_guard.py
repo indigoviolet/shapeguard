@@ -77,6 +77,13 @@ def test_guard_ignores_wildcard():
     assert sg.dims == {}
 
 
+def test_guard_ignores_underscore():
+    sg = ShapeGuard()
+    a = tf.ones([1, 2, 3])
+    sg.guard(a, "_A, _b, 3")
+    assert sg.dims == {}
+
+
 def test_guard_dynamic_shape():
     sg = ShapeGuard()
     with pytest.raises(ShapeError):

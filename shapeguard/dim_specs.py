@@ -160,6 +160,9 @@ class Number(DimSpec):
 
     def __init__(self, value: Union[int, float]):
         super(Number, self).__init__()
+        value = float(value)
+        if int(value) != value:
+            raise exception.ShapeError(f"{value} was not an integer-valued number")
         self.value = int(value)
 
     def has_conflict(

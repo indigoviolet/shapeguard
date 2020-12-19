@@ -55,7 +55,11 @@ Forked from https://github.com/Qwlouse/shapeguard.
 
 ** DONE See icecream.install() to add sg to builtins
 
-** Tests
+** DONE Tests
+** DONE checkin_fork: another idea is if we need a mechanism for dims inferred within a
+    fork to propagate up to the base, use uppercase Dims for base,
+    and lowercase dims for forked
+
 ** Display the full function call in the debug frame in sg()
 
    a multiline call like
@@ -70,10 +74,6 @@ Forked from https://github.com/Qwlouse/shapeguard.
 *** idea for this
 
     use parso? to find the minimal number of lines that parses
-
-** checkin_fork: another idea is if we need a mechanism for dims inferred within a
-    fork to propagate up to the base, use uppercase Dims for base,
-    and lowercase dims for forked
 
 ** another issue: batch size might be smaller on the last batch. so
    we actually need to fork from the base/previous batch, but allow

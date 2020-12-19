@@ -26,7 +26,7 @@ from . import tools
 
 @attr.s(auto_attribs=True)
 class ShapeGuard:
-    params: Dict[str, Any]
+    params: Dict[str, Any] = attr.ib(factory=dict)
     dims: Dict[str, int] = attr.ib(factory=dict)
 
     def matches(self, tensor, template: str) -> bool:

@@ -12,15 +12,19 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import pytest
 import tensorflow as tf
-
-from shapeguard.guard import ShapeGuard
+from shapeguard import ShapeError, ShapeGuard
 
 
 def test_matches_basic_numerical():
     sg = ShapeGuard()
     a = tf.ones([1, 2, 3])
     assert sg.matches(a, "1, 2, 3")
+    assert sg.matches(a, "1, 2.0, 3.0")
+    with pytest.raises(ShapeError):
+        assert sg.matches(a, "1, 2.0, 3.1")
+
     assert not sg.matches(a, "1, 2, 4")
     assert not sg.matches(a, "1, 2, 3, 4")
     assert not sg.matches(a, "1, 2")

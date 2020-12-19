@@ -3,7 +3,7 @@ from __future__ import annotations
 import builtins
 import inspect
 import sys
-from collections import Sequence
+from collections.abc import Sequence
 from contextlib import contextmanager
 from types import FrameType
 from typing import Any, Dict, List, Optional, Set, Tuple, Union
@@ -34,6 +34,10 @@ class InterfaceMeta(type):
         self._noop = True
         yield
         self._noop = False
+
+    def reset(self):
+        self._current = None
+        self._all = {}
 
     def get(self) -> ShapeGuard:
         if self._current is None:
@@ -109,14 +113,14 @@ class Interface(metaclass=InterfaceMeta):
 
     @classmethod
     def _checkout_fork(cls, fork_sg: ShapeGuard) -> None:
-        fork_sg.dims.update(cls._get().dims)
+        if fork_sg is not cls._get():
+            fork_sg.dims.update(cls._get().dims)
 
     @classmethod
     def _checkin_fork(cls, fork_sg: ShapeGuard):
-        # Potentially transfer some dims from fork to base. For
-        # example, by convention we could say all upper case dims will
-        # be transferred.
-        pass
+        if fork_sg is not cls._get():
+            transferred_dims = {k: v for k, v in fork_sg.dims.items() if k[0].isupper()}
+            cls._get().dims.update(transferred_dims)
 
     @classmethod
     def install(cls, sg="sg"):
