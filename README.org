@@ -108,78 +108,60 @@ assert sg.dims['B'] == 64
  - comment-only dimensions: ~?,_num_targets,W,C~ (~num_targets~ won't be stored for future)
 * Roadmap
 
-** DONE should dynamic named dimensions be stored?
-   if they should, then should there be a syntax for named but
-   unstored dimensions (for documentation purposes, to handle
-   dimensions that will be different in the future)?
-   eg. _num_gt_targets already works!,
-** DONE use devtools.debug to produce error message containing the actual tensor name
-** DONE with sg_fork(stride=)
+  - [X] should dynamic named dimensions be stored?
+    if they should, then should there be a syntax for named but
+    unstored dimensions (for documentation purposes, to handle
+    dimensions that will be different in the future)?
+    eg. _num_gt_targets already works!,
+  - [X] use devtools.debug to produce error message containing the actual tensor name
+  - [X] with sg_fork(stride=)
+     - allow a forked ShapeGuard obj which will create a singleton that
+       can be reused later
 
-   - allow a forked ShapeGuard obj which will create a singleton that
-     can be reused later
+     - probably need to allow this singleton to update its dims from the
+       base singleton (maybe use chainmap?)
 
-   - probably need to allow this singleton to update its dims from the
-     base singleton (maybe use chainmap?)
+     - I think we will want this context manager to activate the forked
+       shapeguard for all calls within it
+  - [X] support floats instead of int (mainly for interpolation after division or multiplication)
+  - [X] support iterable in sg() "list" mode instead only list
+  - [X] with sg_noop: context manager
+    so that pl.Trainer.tune() can run with different batch sizes etc.
 
-   - I think we will want this context manager to activate the forked
-     shapeguard for all calls within it
+     - [X] support no-op mode for sg()
+      +from shapeguard import sg_noop as sg+
 
-** DONE support floats instead of int (mainly for interpolation after division or multiplication)
-** DONE support iterable in sg() "list" mode instead only list
-** DONE with sg_noop: context manager
-
-   so that pl.Trainer.tune() can run with different batch sizes etc.
-
-*** TODO support no-op mode for sg()
-
-    +from shapeguard import sg_noop as sg+
-
-    this isn't sufficient because it requires changing imports all over
-    the place
-
-** DONE See icecream.install() to add sg to builtins
-
-** DONE Tests
-** DONE checkin_fork: another idea is if we need a mechanism for dims inferred within a
+      this isn't sufficient because it requires changing imports all over
+      the place
+  - [X] See icecream.install() to add sg to builtins
+  - [X] Tests
+  - [X] checkin_fork: another idea is if we need a mechanism for dims inferred within a
     fork to propagate up to the base, use uppercase Dims for base,
     and lowercase dims for forked
+  - [X] Allow externally supplied `dim=val` args to `sg()`
+    these should be inserted into known_dims before template processing
 
-** Display the full function call in the debug frame in sg()
+     - is this better than interpolation of the value?
+        - it enters known_dims, which it could if we did Dim={var}
+        - we can make sure it's an int (sometimes floats get interpolated)
+  - [X] +None vs -1 for+ dynamic dimensions
+    +convert to common=None,  via shim+
 
-   a multiline call like
+    What are dynamic dimensions anyway?
+    https://pgaleone.eu/tensorflow/2018/07/28/understanding-tensorflow-tensors-shape-static-dynamic/
 
-   sg(
-      foo
-   )
+    Don't seem to be relevant to Pytorch, so nothing to do here
+  - [ ] Display the full function call in the debug frame in sg()
+    a multiline call like
 
-   currently only captures the first line
+    sg(
+       foo
+    )
 
-
-*** idea for this
-
+    currently only captures the first line
     use parso? to find the minimal number of lines that parses
-
-** another issue: batch size might be smaller on the last batch. so
-   we actually need to fork from the base/previous batch, but allow
-   B to be changed.
-
-
-** Add a decorator @sg() that can guard function args
-** cache results by tensor id/template?
-** [probably not] Allow externally supplied `dim=val` args to `sg()`
-   these should be inserted into known_dims before template processing
-
-*** is this better than interpolation of the value?
-
-    - it enters known_dims, which it could if we did Dim={var}
-    - we can make sure it's an int (sometimes floats get interpolated)
-
-** DONE +None vs -1 for+ dynamic dimensions
-
-   +convert to common=None,  via shim+
-
-   What are dynamic dimensions anyway?
-   https://pgaleone.eu/tensorflow/2018/07/28/understanding-tensorflow-tensors-shape-static-dynamic/
-
-   Don't seem to be relevant to Pytorch, so nothing to do here
+  - [ ] batch size might be smaller on the last batch.
+    so we actually need to fork from the base/previous batch, but
+    allow B to be changed.
+  - [ ] Add a decorator @sg() that can guard function args
+  - [ ] cache results by tensor id/template?
