@@ -50,4 +50,5 @@ class ShapeGuard:
 
     def drop(self, *drop_dims: str):
         for d in drop_dims:
-            del self.dims[d]
+            if d in self.dims:
+                del self.dims[d]
