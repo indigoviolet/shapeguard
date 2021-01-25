@@ -6,7 +6,7 @@ import sys
 from collections.abc import Sequence
 from contextlib import contextmanager
 from types import FrameType
-from typing import Any, Dict, List, Optional, Set, Tuple, Union
+from typing import Any, Dict, Generator, List, Optional, Set, Tuple, Union
 
 from lark import LarkError
 
@@ -26,7 +26,7 @@ class InterfaceMeta(type):
     """
 
     _current: Optional[ShapeGuard] = None
-    _all: Dict[HashableDict, ShapeGuard] = {}
+    _all: Dict[Optional[HashableDict], ShapeGuard] = {}
     _noop = False
 
     @contextmanager
@@ -41,15 +41,30 @@ class InterfaceMeta(type):
 
     def get(self) -> ShapeGuard:
         if self._current is None:
-            self._current = self._get()
+            self._current = self.get_base()
         return self._current
 
-    def _get(self, params: Dict[str, Any] = {}) -> ShapeGuard:
-        params = HashableDict(params)
-        if params not in self._all:
-            self._all[params] = ShapeGuard(params=params)
+    def get_base(self) -> ShapeGuard:
+        return self._get(None)
 
-        return self._all[params]
+    def get_throwaway(self) -> ShapeGuard:
+        return self._get({})
+
+    def _get(self, params: Optional[Dict[str, Any]]) -> ShapeGuard:
+        if params is not None and len(params) == 0:
+            # throwaway
+            return ShapeGuard()
+        elif params is None:
+            # base
+            if None not in self._all:
+                self._all[None] = ShapeGuard()
+            return self._all[None]
+        else:
+            # fork
+            params = HashableDict(params)
+            if params not in self._all:
+                self._all[params] = ShapeGuard(params=params)
+            return self._all[params]
 
     def __call__(self, arg, template: Union[str, List[str], Set[str], Tuple[str, ...]]):  # type: ignore[override]
         if self._noop:
@@ -96,11 +111,11 @@ class Interface(metaclass=InterfaceMeta):
 
     @classmethod
     @contextmanager
-    def fork(cls, **kwargs):
+    def fork(cls, **kwargs) -> Generator[ShapeGuard, None, None]:
         prev = cls._current
         fork_sg = cls._get(params=kwargs)
         cls._switch_fork(fork_sg)
-        yield
+        yield fork_sg
         cls._switch_fork(prev)
 
     @classmethod
@@ -113,14 +128,14 @@ class Interface(metaclass=InterfaceMeta):
 
     @classmethod
     def _checkout_fork(cls, fork_sg: ShapeGuard) -> None:
-        if fork_sg is not cls._get():
-            fork_sg.dims.update(cls._get().dims)
+        if fork_sg is not cls.get_base():
+            fork_sg.dims.update(cls.get_base().dims)
 
     @classmethod
     def _checkin_fork(cls, fork_sg: ShapeGuard):
-        if fork_sg is not cls._get():
+        if fork_sg is not cls.get_base():
             transferred_dims = {k: v for k, v in fork_sg.dims.items() if k[0].isupper()}
-            cls._get().dims.update(transferred_dims)
+            cls.get_base().dims.update(transferred_dims)
 
     @classmethod
     def install(cls, sg="sg"):

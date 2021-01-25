@@ -47,3 +47,7 @@ class ShapeGuard:
 
     def __getitem__(self, item: str) -> List[Optional[int]]:
         return tools.evaluate(item, self.dims)
+
+    def drop(self, *drop_dims: str):
+        for d in drop_dims:
+            del self.dims[d]
